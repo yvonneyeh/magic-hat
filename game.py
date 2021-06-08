@@ -2,13 +2,12 @@ import sys
 import random
 import time
 from hats import hats
-import string
-import re
 
 # QUESTIONS LIST --------------------------------------------------
 q_file = open("questions.txt", "r")
 content = q_file.read()
 question_list = content.split("\n")
+question_set = set(question_list)
 q_file.close()
 
 num_Qs = len(question_list)
@@ -73,16 +72,18 @@ class Game(object):
         question = get_question()
         if question not in self.asked_Qs:
             self.asked_Qs.add(question)
-            print(question)
+            # print(question)
         else:
             question = get_question()
 
+        return question
 
 
-    def reset_q_set(self):
+    def reset_questions(self):
         """When all questions have been asked, reset the set."""
 
-        if len(self.asked_Qs) != 200:
+        # if len(self.asked_Qs) != 200:
+        if question_set == self.asked_Qs:
             self.asked_Qs = set()
 
 
@@ -98,18 +99,21 @@ def play_game():
     game = Game()
     game.start()
 
-    while True:
+    while game.playing:
         print("\nDo you want to: ")
         print("1) Get a question, \n2) Turn on auto-ask, or \nQ) Quit?")
         choice = input("> ").upper()
 
         if choice == "1":
-            print(get_question())
+            print(game.new_question())
+            # print("set:", game.asked_Qs)
 
         elif choice == "2":
             print("How often would you like to receive a question? Enter # of seconds:")
             seconds = int(input("> "))
-            print(f"Magic Hat will ask a question every {seconds} seconds. \nType 'S' to stop auto-asking questions.")
+            # while type(seconds) != int:
+            #     seconds = input("Invalid length of time. Enter a # of seconds: \n> ")
+            print(f"Magic Hat will ask a question every {seconds} seconds. \nType 'S' to stop auto-asking questions.\n")
             # starttime = time.time()
             game.auto_ask = True
             while game.auto_ask:
@@ -117,39 +121,33 @@ def play_game():
                 time.sleep(seconds)
                 # user_input = input()
                 # if user_input.upper() == "S":
+                #     game.auto_ask = False
                 #     break
-
-
-        elif choice == "3":
-            get_question()
 
         elif choice == "Q":
             print("\nHope you enjoyed the questions! :)")
-            break
+            game.playing = False
+            game.status = STATUS_FINISHED
+            return game.status
 
         else:
-            print("You can't do that with the magic hat!")
+            print("\nYou can't do that with the magic hat!")
 
 
-def ticktock():
-    starttime = time.time()
-    while True:
-        print(time.time(), "tick")
-        seconds = 10.0
-        time.sleep(seconds - ((time.time() - starttime) % 60.0))
-    #
-    # starttime = time.time()
-    # while True:
-    #     print(time.time(), "tick")
-    #     seconds = 10
-    #     time.sleep(60 - ((time.time() - starttime) % 60)
-    # 	# thing to run
+# def ticktock():
+#     starttime = time.time()
+#     while True:
+#         print(time.time(), "tick")
+#         seconds = 10.0
+#         time.sleep(seconds - ((time.time() - starttime) % 60.0))
 
 
 if __name__ == '__main__':
-    # show_hat()
-    # play_game()
+    # print(question_set)
+    play_game()
+
     # ticktock()
-    game = Game()
-    print(game.asked_Qs)
-    game.new_question()
+
+    # game = Game()
+    # print(game.asked_Qs)
+    # game.new_question()
