@@ -18,7 +18,7 @@ STATUS_FINISHED = "done"
 
 # DEFAULT MESSAGES --------------------------------------------------
 START = "MAGIC HAT"
-INTRO = "Magic hat is a game you can play with your team, where you pick a question out of a hat, as a team building exercise."
+INTRO = "Magic hat is a game you can play with your team. \nPick a question out of the hat!"
 
 
 def get_question():
@@ -62,6 +62,8 @@ class Game(object):
         print(START)
         show_hat()
         print(INTRO)
+
+        return self.status
 
 
     def new_question(self):
