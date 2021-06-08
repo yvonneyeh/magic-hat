@@ -19,6 +19,10 @@ STATUS_FINISHED = "done"
 # DEFAULT MESSAGES --------------------------------------------------
 START = "MAGIC HAT"
 INTRO = "Magic hat is a game you can play with your team. \nPick a question out of the hat!"
+MOVE_QUERY = "\nDo you want to: \n1) Get a question, \n2) Turn on auto-ask, or \nQ) Quit?"
+TIME_QUERY = "\nHow often would you like to receive a question? Enter # of seconds:"
+ENDING = "\nHope you enjoyed the questions with your team! :)"
+BAD_MOVE = "\nYou can't do that with the magic hat!"
 
 
 def get_question():
@@ -46,7 +50,15 @@ def retrieve_input(self):
 
 
 class Game(object):
-    """ A Magic Hat Game object. """
+    """ A Magic Hat Game object. (game.Game)
+
+    Methods:
+    start: Begin the game (bool)
+    new_question: Get a unique question.
+    reset_questions: Reset question set once all 200 questions have been asked.
+    get_status: Get status of gameplay (bool)
+
+    """
 
     def __init__(self):
         self.status = STATUS_PLAYING
@@ -72,6 +84,7 @@ class Game(object):
 
         # while len(self.asked_Qs) != 200:
         question = get_question()
+
         if question not in self.asked_Qs:
             self.asked_Qs.add(question)
             # print(question)
@@ -102,8 +115,7 @@ def play_game():
     game.start()
 
     while game.playing:
-        print("\nDo you want to: ")
-        print("1) Get a question, \n2) Turn on auto-ask, or \nQ) Quit?")
+        print(MOVE_QUERY)
         choice = input("> ").upper()
 
         if choice == "1":
@@ -111,15 +123,27 @@ def play_game():
             # print("set:", game.asked_Qs)
 
         elif choice == "2":
-            print("How often would you like to receive a question? Enter # of seconds:")
-            seconds = int(input("> "))
+            print(TIME_QUERY)
+            # seconds = int(input("> "))
+            while True:
+                try:
+                    seconds = int(input("> "))
+                except ValueError:
+                    print("Sorry, I didn't understand that. Enter # of seconds:")
+                    # Try again... Return to the start of the loop
+                    continue
+                else:
+                    # Seconds successfully parsed! Exiting the loop.
+                    break
+
             # while type(seconds) != int:
             #     seconds = input("Invalid length of time. Enter a # of seconds: \n> ")
             print(f"Magic Hat will ask a question every {seconds} seconds. \nType 'S' to stop auto-asking questions.\n")
             # starttime = time.time()
             game.auto_ask = True
             while game.auto_ask:
-                print(get_question())
+                print(game.new_question())
+                # print("set:", game.asked_Qs)
                 time.sleep(seconds)
                 # user_input = input()
                 # if user_input.upper() == "S":
@@ -127,21 +151,13 @@ def play_game():
                 #     break
 
         elif choice == "Q":
-            print("\nHope you enjoyed the questions! :)")
+            print(ENDING)
             game.playing = False
             game.status = STATUS_FINISHED
             return game.status
 
         else:
-            print("\nYou can't do that with the magic hat!")
-
-
-# def ticktock():
-#     starttime = time.time()
-#     while True:
-#         print(time.time(), "tick")
-#         seconds = 10.0
-#         time.sleep(seconds - ((time.time() - starttime) % 60.0))
+            print(BAD_MOVE)
 
 
 if __name__ == '__main__':
