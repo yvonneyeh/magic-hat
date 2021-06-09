@@ -1,6 +1,17 @@
 # Magic Hat
 Magic hat is a command line game you can play with your team, where you pick a question out of a hat, as a team-building exercise.
 
+```
+ __  __             _        _    _       _              /`_>
+|  \/  |           (_)      | |  | |     | |           / /
+| \  / | __ _  __ _ _  ___  | |__| | __ _| |_          |/
+| |\/| |/ _` |/ _` | |/ __| |  __  |/ _` | __|     ____|    __
+| |  | | (_| | (_| | | (__  | |  | | (_| | |_     |    \.-``  )
+|_|  |_|\__,_|\__, |_|\___| |_|  |_|\__,_|\__|    |---``\  _.'
+               __/ |                           .-`'---``_.'
+              |___/                           (__...--``
+```
+
 ## Gameplay
 
 1. Clone this repository:
@@ -36,7 +47,7 @@ python3 tests.py
 - Ask the hat to turn off the periodic questions
 - The hat should not repeat questions that have been asked before (unless they've all been asked already)
 
-#### Icebreaker Questions:
+#### Icebreaker Questions
 - Examples of questions would be “what was your childhood nickname?” Or “what is your favorite emoji and why?”.
 - All questions are from [this list of icebreaker questions](https://conversationstartersworld.com/icebreaker-questions/)
 
@@ -47,3 +58,7 @@ My original attempt to create this game is located in [`original.py`](https://gi
 - By implementing a Game class, we can access class attributes that allow for more easily tested components.
 - Sets were also used to speed up lookup time for previously asked questions.
 - Python provides a library named `keyboard` which is used here to get full control of a user's keypresses.
+
+#### Future Updates
+- Keep track of time with Unix timestamp: `start_time` and `next_time`
+- Refactor `play_game()` to use switch case instead of if/elif statements
