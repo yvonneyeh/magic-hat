@@ -22,6 +22,7 @@ START = "MAGIC HAT"
 INTRO = "Magic hat is a game you can play with your team. \nPick a question out of the hat!"
 MOVE_QUERY = "\nDo you want to: \n1) Get a question, \n2) Turn on auto-ask, or \nQ) Quit?"
 TIME_QUERY = "\nHow often would you like to receive a question? Enter # of seconds:"
+TIME_ERROR = "Sorry, I didn't understand that. Enter # of seconds:"
 AUTO_OFF = "\nTurned off auto-ask!"
 ENDING = "\nHope you enjoyed the questions with your team! :)"
 BAD_MOVE = "\nThe magic hat does not understand your request!"
@@ -56,7 +57,7 @@ class Game(object):
 
     Methods:
     start: Begin the game (bool)
-    get_new_question: Get a unique question.
+    get_question_from_list: Get a unique question.
     reset_questions: Reset question set once all 200 questions have been asked.
     get_status: Get status of gameplay (bool)
 
@@ -82,33 +83,16 @@ class Game(object):
         return self.status
 
     def get_question_from_list(self):
-        """ Randomly selects question from questions set. """
+        """ Randomly selects question from questions list.
+        Display a new question that hasn't been asked yet.
+        When all questions have been asked, reset the set."""
 
-        if len(self.Q_list) != 0:
+        if len(self.Q_list) != 0 and not self.all_asked_already():
             question = random.choice(self.Q_list)
             self.Q_list.remove(question)
-
+            self.asked_Qs.add(question)
         else:
-            # print("q list:", question_list)
-            self.Q_list = question_list.copy()
-
-        return question
-
-    def get_question_from_set(self):
-        """ Randomly selects question from questions set. """
-
-        if len(self.new_Qs) == 0:
-            self.new_Qs = question_set
-
-        # print(self.new_Qs)
-        Q = random.sample(self.new_Qs, 1)
-        # print("type of new_q",type(self.new_Qs))
-        # print(question)
-        question = str(Q)
-        # print("type of Q:", type(question))
-        # question = random.sample(self.new_Qs, 1)
-        self.new_Qs.discard(question)
-        # print(self.new_Qs)
+            self.reset_questions()
 
         return question
 
@@ -142,11 +126,11 @@ class Game(object):
 
 
     def reset_questions(self):
-        """When all questions have been asked, reset the set."""
+        """When all questions have been asked, reset the list."""
 
         # if len(self.asked_Qs) != 200:
         # if question_set == self.asked_Qs:
-        self.asked_Qs = set()
+        self.Q_list = question_list.copy()
 
         return self.asked_Qs
 
@@ -169,9 +153,6 @@ def play_game():
 
         if choice == "1":
             print(game.get_question_from_list())
-            # print("Q_list len:",len(game.Q_list))
-            # print("new_Qs len:",len(game.new_Qs))
-            # print("asked_Qs len:",len(game.asked_Qs))
 
         elif choice == "2":
             print(TIME_QUERY)
@@ -179,15 +160,14 @@ def play_game():
                 try:
                     seconds = int(input("> "))
                 except ValueError:
-                    print("Sorry, I didn't understand that. Enter # of seconds:")
+                    print(TIME_ERROR)
                     continue    # Try again... Return to the start of the loop.
                 else:
                     break   # Seconds successfully parsed! Exiting the loop.
             print(f"Magic Hat will ask a question every {seconds} seconds. \nType 'S' to stop auto-asking questions.\n")
             game.auto_ask = True
             while game.auto_ask:
-                print(game.get_question_from_list())
-                # print("Q_list len:",len(game.Q_list))
+                print("\n",game.get_question_from_list())
                 time.sleep(seconds)
 
                 if keyboard.is_pressed("s"):
