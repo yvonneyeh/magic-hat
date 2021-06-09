@@ -5,7 +5,7 @@ Magic hat is a command line game you can play with your team, where you pick a q
 
 To play, run the following in your terminal:
 ```
-python3 game.py
+sudo python3 game.py
 ```
 
 To execute tests:

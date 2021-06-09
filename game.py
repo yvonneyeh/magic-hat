@@ -2,6 +2,8 @@ import sys
 import random
 import time
 from hats import hats
+import keyboard
+
 
 # QUESTIONS LIST --------------------------------------------------
 q_file = open("questions.txt", "r")
@@ -21,8 +23,9 @@ START = "MAGIC HAT"
 INTRO = "Magic hat is a game you can play with your team. \nPick a question out of the hat!"
 MOVE_QUERY = "\nDo you want to: \n1) Get a question, \n2) Turn on auto-ask, or \nQ) Quit?"
 TIME_QUERY = "\nHow often would you like to receive a question? Enter # of seconds:"
+AUTO_OFF = "\nTurned off auto-ask!"
 ENDING = "\nHope you enjoyed the questions with your team! :)"
-BAD_MOVE = "\nYou can't do that with the magic hat!"
+BAD_MOVE = "\nThe magic hat does not understand your request!"
 
 
 def get_question():
@@ -135,16 +138,27 @@ def play_game():
                 else:
                     # Seconds successfully parsed! Exiting the loop.
                     break
-
-            # while type(seconds) != int:
-            #     seconds = input("Invalid length of time. Enter a # of seconds: \n> ")
             print(f"Magic Hat will ask a question every {seconds} seconds. \nType 'S' to stop auto-asking questions.\n")
-            # starttime = time.time()
             game.auto_ask = True
             while game.auto_ask:
                 print(game.new_question())
-                # print("set:", game.asked_Qs)
                 time.sleep(seconds)
+
+                # if keyboard.wait("s"):
+                # keyboard.on_press_key("s", lambda _:print('Turned off auto-ask!'))
+                if keyboard.is_pressed("s"):
+                # if keyboard.read_key() == "s":
+                    print(AUTO_OFF)
+                    game.auto_ask = False
+                    break
+
+
+                # try:  # used try so that if user pressed other than the given key error will not be shown
+                #     if keyboard.is_pressed('S'):  # if key 's' is pressed
+                #         print('Turned off auto-ask!')
+                #         break  # finishing the loop
+                # except:
+                #     break  # if user pressed a key other than the given key the loop will break
                 # user_input = input()
                 # if user_input.upper() == "S":
                 #     game.auto_ask = False
