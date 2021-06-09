@@ -1,8 +1,7 @@
-import sys
 import random
 import time
-from hats import hats
 import keyboard
+from hats import hats
 
 
 # QUESTIONS LIST --------------------------------------------------
@@ -57,7 +56,7 @@ class Game(object):
 
     Methods:
     start: Begin the game (bool)
-    new_question: Get a unique question.
+    get_new_question: Get a unique question.
     reset_questions: Reset question set once all 200 questions have been asked.
     get_status: Get status of gameplay (bool)
 
@@ -65,9 +64,11 @@ class Game(object):
 
     def __init__(self):
         self.status = STATUS_PLAYING
-        self.asked_Qs = set() # already asked questions
-        self.auto_ask = False
-        self.playing = True
+        self.Q_list = question_list.copy()
+        self.new_Qs = set(question_list)
+        self.asked_Qs = set()   # already asked questions
+        self.auto_ask = False   # periodic questions
+        self.playing = True     # game in progress
         self.start_time = time.time()
 
 
@@ -80,29 +81,74 @@ class Game(object):
 
         return self.status
 
+    def get_question_from_list(self):
+        """ Randomly selects question from questions set. """
 
-    def new_question(self):
-        """ Display a new question that hasn't been asked yet.
-        When all questions have been asked, reset."""
+        if len(self.Q_list) != 0:
+            question = random.choice(self.Q_list)
+            self.Q_list.remove(question)
 
-        # while len(self.asked_Qs) != 200:
-        question = get_question()
-
-        if question not in self.asked_Qs:
-            self.asked_Qs.add(question)
-            # print(question)
         else:
-            question = get_question()
+            # print("q list:", question_list)
+            self.Q_list = question_list.copy()
 
         return question
+
+    def get_question_from_set(self):
+        """ Randomly selects question from questions set. """
+
+        if len(self.new_Qs) == 0:
+            self.new_Qs = question_set
+
+        # print(self.new_Qs)
+        Q = random.sample(self.new_Qs, 1)
+        # print("type of new_q",type(self.new_Qs))
+        # print(question)
+        question = str(Q)
+        # print("type of Q:", type(question))
+        # question = random.sample(self.new_Qs, 1)
+        self.new_Qs.discard(question)
+        # print(self.new_Qs)
+
+        return question
+
+
+    def get_new_question(self):
+        """ Display a new question that hasn't been asked yet.
+        When all questions have been asked, reset the set."""
+
+        question = self.get_question_from_list()
+
+        if not self.all_asked_already():
+
+            # print("askedQs type",type(self.asked_Qs))
+            if question not in self.asked_Qs:
+                self.asked_Qs.add(question)
+                # print(question)
+
+            else:   # generate a previously unasked question
+                question = self.get_question_from_list()
+
+        else:
+            self.reset_questions()
+
+        return question
+
+
+    def all_asked_already(self):
+        """ Return true if all questions have been asked already. """
+
+        return question_set == self.asked_Qs
 
 
     def reset_questions(self):
         """When all questions have been asked, reset the set."""
 
         # if len(self.asked_Qs) != 200:
-        if question_set == self.asked_Qs:
-            self.asked_Qs = set()
+        # if question_set == self.asked_Qs:
+        self.asked_Qs = set()
+
+        return self.asked_Qs
 
 
     def get_status(self):
@@ -122,47 +168,32 @@ def play_game():
         choice = input("> ").upper()
 
         if choice == "1":
-            print(game.new_question())
-            # print("set:", game.asked_Qs)
+            print(game.get_question_from_list())
+            # print("Q_list len:",len(game.Q_list))
+            # print("new_Qs len:",len(game.new_Qs))
+            # print("asked_Qs len:",len(game.asked_Qs))
 
         elif choice == "2":
             print(TIME_QUERY)
-            # seconds = int(input("> "))
             while True:
                 try:
                     seconds = int(input("> "))
                 except ValueError:
                     print("Sorry, I didn't understand that. Enter # of seconds:")
-                    # Try again... Return to the start of the loop
-                    continue
+                    continue    # Try again... Return to the start of the loop.
                 else:
-                    # Seconds successfully parsed! Exiting the loop.
-                    break
+                    break   # Seconds successfully parsed! Exiting the loop.
             print(f"Magic Hat will ask a question every {seconds} seconds. \nType 'S' to stop auto-asking questions.\n")
             game.auto_ask = True
             while game.auto_ask:
-                print(game.new_question())
+                print(game.get_question_from_list())
+                # print("Q_list len:",len(game.Q_list))
                 time.sleep(seconds)
 
-                # if keyboard.wait("s"):
-                # keyboard.on_press_key("s", lambda _:print('Turned off auto-ask!'))
                 if keyboard.is_pressed("s"):
-                # if keyboard.read_key() == "s":
                     print(AUTO_OFF)
                     game.auto_ask = False
                     break
-
-
-                # try:  # used try so that if user pressed other than the given key error will not be shown
-                #     if keyboard.is_pressed('S'):  # if key 's' is pressed
-                #         print('Turned off auto-ask!')
-                #         break  # finishing the loop
-                # except:
-                #     break  # if user pressed a key other than the given key the loop will break
-                # user_input = input()
-                # if user_input.upper() == "S":
-                #     game.auto_ask = False
-                #     break
 
         elif choice == "Q":
             print(ENDING)
@@ -175,11 +206,4 @@ def play_game():
 
 
 if __name__ == '__main__':
-    # print(question_set)
     play_game()
-
-    # ticktock()
-
-    # game = Game()
-    # print(game.asked_Qs)
-    # game.new_question()
