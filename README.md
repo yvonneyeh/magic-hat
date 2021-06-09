@@ -42,4 +42,8 @@ python3 tests.py
 
 ## Design
 
-My original attempt to create this game is located in [`original.py`](https://github.com/yvonneyeh/magic-hat/blob/main/original.py), you can see that prior to refactoring, the code wasn't quite DRY and had some repitition in logic. I refactored the code to separate larger functions into smaller and more abstracted logic to reduce complexity and increase efficiency. By implementing a Game class, we can access class attributes that allow for more easily tested components. Sets were also used to speed up lookup time for previously asked questions.
+My original attempt to create this game is located in [`original.py`](https://github.com/yvonneyeh/magic-hat/blob/main/original.py), you can see that prior to refactoring, the code wasn't quite DRY and had some repetition in logic. I refactored the code to separate larger functions into smaller and more abstracted logic to reduce complexity and increase efficiency.
+
+- By implementing a Game class, we can access class attributes that allow for more easily tested components.
+- Sets were also used to speed up lookup time for previously asked questions.
+- Python provides a library named `keyboard` which is used here to get full control of a user's keypresses.
